@@ -1,3 +1,7 @@
+import os
+from datetime import datetime
+
+
 class Log:
     file = None
 
@@ -11,7 +15,6 @@ class Log:
             file_name = self.get_time().replace(":", "-").replace(" ", "_")
 
             # checks if a log folder exists, if it doesn't then creates one
-            import os
             directory = 'logs'
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -32,7 +35,6 @@ class Log:
 
     def get_time(self):
         """Gets the current system time"""
-        from datetime import datetime
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
 
     def write(self, log):
