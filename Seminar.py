@@ -4,9 +4,10 @@ class Seminar:
     description = None
     start = None
     end = None
+    link = None
 
     def __init__(self):
         pass
 
     def seminar_parameters(self):
-        return self.summary, self.description, self.start, self.end
+        return self.summary, self.description, self.start, self.end, self.link
