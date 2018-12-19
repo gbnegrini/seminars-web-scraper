@@ -6,7 +6,7 @@ from Log import Log
 import traceback
 import sys
 from pprint import pprint
-from Seminar import Seminar
+import re
 
 
 class GoogleCalAPI:
@@ -14,7 +14,7 @@ class GoogleCalAPI:
         # https://developers.google.com/calendar/quickstart/python"""
     log = Log()
     gcal = None
-    calID = '9tg5lsgki4v4o1hib2q6js23hc@group.calendar.google.com'
+    calID = 'r00mr8gkk0mpg2ia01e8mbd66g@group.calendar.google.com'
 
     def __init__(self, log):
         try:
@@ -36,28 +36,53 @@ class GoogleCalAPI:
             self.log.write(str(traceback.format_exception(exc_type, exc_value, exc_tb)))
             pprint(traceback.format_exception(exc_type, exc_value, exc_tb))
 
+    def get_events_links(self):
+        '''Gets the events already registered in the calendar'''
+        link_regex = re.compile('<.*>')
+        page_token = None
+        link_list = []
+        while True:
+            event = self.gcal.events().list(calendarId=self.calID, pageToken=page_token).execute()
+            for event in event['items']:
+                try:
+                    # the unique link for the seminar's institutional page will be used further to avoid adding the same event again
+                    link_list = link_list.append(link_regex.search(event['description']).group())
+                except AttributeError:
+                    pass
+            page_token = event.get('nextPageToken')
+            if not page_token:
+                break
+        return link_list
+
     def create_events(self, seminars_list):
         try:
+            link_list = self.get_events_links()
             for seminar in seminars_list:
-                print(seminar.summary)
-                event = {
-                    'summary': seminar.summary,
-                    'description': seminar.description,
-                    'start': {
-                        'dateTime': seminar.start
-                    },
-                    'end': {
-                        'dateTime': seminar.end
-                    }
-                }
+                try:
+                    # checks if this seminar is not already in the calendar, if it isn't then creates the event
+                    if seminar.link not in link_list:
 
-                event = self.gcal.events().insert(calendarId=self.calID, body=event).execute()
-                self.log.write('Event created: %s' % (event.get('htmlLink')))
-                self.log.write(event.get('summary') + "\n" + event.get('description'))
-                print('Event created: %s' % (event.get('htmlLink')))
+                        event = {
+                            'summary': seminar.summary,
+                            'description': seminar.description,
+                            'start': {
+                                'dateTime': seminar.start
+                            },
+                            'end': {
+                                'dateTime': seminar.end
+                            }
+                        }
+
+                        event = self.gcal.events().insert(calendarId=self.calID, body=event).execute()
+                        self.log.write('Event created: %s' % (event.get('htmlLink')))
+                        self.log.write(event.get('summary') + "\n" + event.get('description'))
+                        print('Event created: %s' % (event.get('htmlLink')))
+                except TypeError:
+                    pass
 
         except Exception as error:
             self.log.write("Error: " + error.__str__())
             exc_type, exc_value, exc_tb = sys.exc_info()
             self.log.write(str(traceback.format_exception(exc_type, exc_value, exc_tb)))
             pprint(traceback.format_exception(exc_type, exc_value, exc_tb))
+
