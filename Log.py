@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
-import traceback, sys
+import traceback
+import sys
 
 
 class Log:
@@ -48,4 +49,3 @@ class Log:
             print("ERROR: .write(log=) argument " + error.__str__())
             exc_type, exc_value, exc_tb = sys.exc_info()
             print(traceback.format_exception(exc_type, exc_value, exc_tb))
-
