@@ -7,3 +7,4 @@ Files:
 - Seminar.py: class to instantiate an object containing information about a seminar.
 - seminars_web_scraper.py: module that contains scraping methods.
 - API_GoogleCal.py: module that contains methods for using the Google Calendar API.  
+- Log: class used to create a log file and write logging entries.
