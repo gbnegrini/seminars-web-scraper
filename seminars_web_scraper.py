@@ -45,7 +45,8 @@ class WebScraper:
                 seminar_event = Seminar()
                 seminar_event.summary = " ".join(article.h2.getText().split()[0:-3])
                 seminar_event.description = article.p.getText() \
-                                            + "\nLink: " + article.a.get("href")
+                                            + "\nLink: <" + article.a.get("href") +">"
+                seminar_event.link = "<" + article.a.get("href") +">"
 
                 # Regex to get hour, minutes and date from the article tag text
                 hour_regex = re.compile(r'.\dh')
