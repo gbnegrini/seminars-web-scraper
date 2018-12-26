@@ -38,7 +38,7 @@ class GoogleCalAPI:
 
     def get_events_links(self):
         '''Gets the events already registered in the calendar'''
-        link_regex = re.compile('<.*>')
+        link_regex = re.compile(r'<.*>')
         page_token = None
         link_list = []
         while True:
@@ -46,12 +46,14 @@ class GoogleCalAPI:
             for event in event['items']:
                 try:
                     # the unique link for the seminar's institutional page will be used further to avoid adding the same event again
-                    link_list = link_list.append(link_regex.search(event['description']).group())
+                    link = link_regex.search(event['description']).group()
+                    link_list.append(link)
                 except AttributeError:
                     pass
             page_token = event.get('nextPageToken')
             if not page_token:
                 break
+
         return link_list
 
     def create_events(self, seminars_list):
