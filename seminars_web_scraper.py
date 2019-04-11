@@ -58,8 +58,12 @@ class WebScraper:
 
                 # Gets the hours matching the hour regex, splits into the "h" delimiter and removes white space
                 hour = hour_regex.search(article.h2.getText()).group().split("h")[0].replace(" ", "")
-                if (int(hour) < 10):    # If the hour has only one digit
-                    hour = "0"+hour     # then a zero must be added to match the dateTime template
+
+                hour = int(hour)
+                if (hour < 10):    # If the hour has only one digit
+                    hour = "0"+str(hour)     # then a zero must be added to match the dateTime template
+
+                hour = str(hour)
 
                 try:
                     # Gets the minutes matching the minutes regex, splits into the "min" delimiter
@@ -69,10 +73,10 @@ class WebScraper:
 
                 # dateTime template : YYYY-MM-DDTHH:MM:SS-02:00
                 seminar_event.start = str(datetime.today().year)+"-"+month+"-"+day+"T"\
-                                        +hour+":"+minutes+":"+"00"+"-02:00"
+                                        +hour+":"+minutes+":"+"00"+"-03:00"
                 end_hour = str(int(hour)+1)  # Seminars usually last one hour
                 seminar_event.end = str(datetime.today().year)+"-"+month+"-"+day+"T"\
-                                        +end_hour+":"+minutes+":"+"00"+"-02:00"
+                                        +end_hour+":"+minutes+":"+"00"+"-03:00"
 
                 # Adds the seminar object to the seminars list
                 if seminar_event is not None:
