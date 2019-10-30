@@ -1,4 +1,4 @@
-beautifulsoup4=4.8.1
+beautifulsoup4==4.8.1
 googleapipythonclient==1.7.11
 googleauth==1.6.3
 googleauthhttplib2==0.0.3
