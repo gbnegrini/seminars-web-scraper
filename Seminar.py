@@ -9,5 +9,5 @@ class Seminar:
     def __init__(self):
         pass
 
-    def seminar_parameters(self):
+    def parameters(self):
         return self.summary, self.description, self.start, self.end, self.link

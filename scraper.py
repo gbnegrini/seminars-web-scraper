@@ -1,35 +1,32 @@
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
 import bs4
-from Log import Log
-from Seminar import Seminar
+from seminar import Seminar
 import re
 from datetime import datetime
 import traceback
 import sys
 from pprint import pprint
 
-
 class WebScraper:
-    log = Log()
     bs = None
 
-    def __init__(self, log):
-        self.log = log
+    def __init__(self):
+        pass
 
     def get_html(self, url):
         """Gets the url HTML content and parses it with BeautifulSoup"""
-        self.log.write("Getting HTML...")
+        print("Getting HTML...")
         try:
             html = urlopen(url)
-            self.log.write("URL: <" + url + "> opened.")
+            print("URL: <" + url + "> opened.")
             self.bs = bs4.BeautifulSoup(html.read(), "html.parser")
-            self.log.write("HTML parsed.")
-            # self.log.write("HTML: \n" + bs.prettify())
+            print("HTML parsed.")
+            # print("HTML: \n" + bs.prettify())
         except (HTTPError, URLError) as error:
-            self.log.write("Error: " + error.__str__())
+            print("Error: " + error.__str__())
             exc_type, exc_value, exc_tb = sys.exc_info()
-            self.log.write(str(traceback.format_exception(exc_type, exc_value, exc_tb)))
+            print(str(traceback.format_exception(exc_type, exc_value, exc_tb)))
             pprint(traceback.format_exception(exc_type, exc_value, exc_tb))
 
     def get_data(self):
@@ -55,6 +52,10 @@ class WebScraper:
 
                 # Gets the text matching the date regex and splits into day and month
                 day, month = date_regex.search(article.h2.getText()).group().split("/")
+                day = int(day)
+                if (day < 10): # If day has only one digit
+                    day = "0"+str(day)  # then a zero must be added to match the dateTime template
+                day = str(day)
 
                 # Gets the hours matching the hour regex, splits into the "h" delimiter and removes white space
                 hour = hour_regex.search(article.h2.getText()).group().split("h")[0].replace(" ", "")
@@ -83,15 +84,15 @@ class WebScraper:
                     seminars.append(seminar_event)
 
                 # Logs the Seminar objects
-                self.log.write("The following seminar was added to the list: ")
-                for parameter in seminar_event.seminar_parameters():
-                    self.log.write(parameter)
+                print("The following seminar was added to the list: ")
+                for parameter in seminar_event.parameters():
+                    print(parameter)
 
             # Returns the list of Seminar objects that will be used to create the Google Calendar events
             return seminars
 
         except Exception as error:
-            self.log.write("Error: " + error.__str__())
+            print("Error: " + error.__str__())
             exc_type, exc_value, exc_tb = sys.exc_info()
-            self.log.write(str(traceback.format_exception(exc_type, exc_value, exc_tb)))
+            print(str(traceback.format_exception(exc_type, exc_value, exc_tb)))
             pprint(traceback.format_exception(exc_type, exc_value, exc_tb))
