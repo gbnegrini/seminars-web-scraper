@@ -5,15 +5,14 @@ import traceback
 import sys
 from pprint import pprint
 import re
-from os import environ
 
 class GoogleCalAPI:
     """# Refer to the Python quickstart on how to setup the environment:
         # https://developers.google.com/calendar/quickstart/python"""
 
     gcal = None
-    calID = 'm6ontqrghi0omg8vnuo8i6daac@group.calendar.google.com'
-    #calID = 'r00mr8gkk0mpg2ia01e8mbd66g@group.calendar.google.com'
+    #calID = 'm6ontqrghi0omg8vnuo8i6daac@group.calendar.google.com'
+    calID = 'r00mr8gkk0mpg2ia01e8mbd66g@group.calendar.google.com'
 
     def __init__(self):
         try:
@@ -21,7 +20,7 @@ class GoogleCalAPI:
             store = file.Storage('token.json')
             creds = store.get()
             if not creds or creds.invalid:
-                flow = client.flow_from_clientsecrets(os.environ['GOOGLE_CREDENTIALS'], SCOPES)
+                flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
                 creds = tools.run_flow(flow, store)
             self.gcal = discovery.build('calendar', 'v3', http=creds.authorize(Http()))
 
